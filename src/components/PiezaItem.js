@@ -1,25 +1,76 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import DetalleModal from './DetalleModal';
 
-const PiezaItem = ({ pieza}) => {
+const PiezaItem = ({ pieza, onDelete }) => {
+    const [modalVisible, setModalVisible] = useState(false);
+    
+    // Función para confirmar eliminación
+    const confirmarEliminacion = () => {
+        Alert.alert(
+            "Confirmar eliminación",
+            `¿Estás seguro de eliminar la pieza "${pieza.nombre}"?`,
+            [
+                {
+                    text: "Cancelar",
+                    style: "cancel"
+                },
+                { 
+                    text: "Eliminar", 
+                    onPress: () => onDelete(pieza.id),
+                    style: "destructive"
+                }
+            ]
+        );
+    };
+    
+    // Función para abrir el modal
+    const abrirModal = () => {
+        setModalVisible(true);
+    };
+    
+    // Función para cerrar el modal
+    const cerrarModal = () => {
+        setModalVisible(false);
+    };
+    
     return (
-        <View style={styles.container}>
-            <View style={styles.headerSection}>
-                <Text style={styles.nombre}>{pieza.nombre}</Text>
-                <TouchableOpacity style={styles.deleteButton}>
-                    <Icon name="delete" size={22} color="#ff6b6b" />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.separator} />
-            <View style={styles.footerSection}>
-                <View style={styles.dateInfo}>
-                    <Icon name="event" size={20} color="#4CAF50" />
-                    <Text style={styles.fechaLabel}>Fecha de cambio:</Text>
-                    <Text style={styles.fecha}>{pieza.fecha}</Text>
+        <>
+            <TouchableOpacity 
+                style={styles.container}
+                onPress={abrirModal}
+                activeOpacity={0.7}
+            >
+                <View style={styles.headerSection}>
+                    <Text style={styles.nombre}>{pieza.nombre}</Text>
+                    <TouchableOpacity 
+                        style={styles.deleteButton}
+                        onPress={(e) => {
+                            e.stopPropagation(); // Evita que se propague al TouchableOpacity padre
+                            confirmarEliminacion();
+                        }}
+                    >
+                        <Icon name="delete" size={22} color="#ff6b6b" />
+                    </TouchableOpacity>
                 </View>
-            </View>
-        </View>
+                
+                <View style={styles.separator} />
+                <View style={styles.footerSection}>
+                    <View style={styles.dateInfo}>
+                        <Icon name="event" size={20} color="#4CAF50" />
+                        <Text style={styles.fechaLabel}>Fecha de cambio:</Text>
+                        <Text style={styles.fecha}>{pieza.fecha}</Text>
+                    </View>
+                </View>
+            </TouchableOpacity>
+            
+            <DetalleModal
+                visible={modalVisible}
+                pieza={pieza}
+                onClose={cerrarModal}
+            />
+        </>
     );
 };
 
@@ -53,6 +104,7 @@ const styles = StyleSheet.create({
         padding: 8,
         borderRadius: 20,
         backgroundColor: '#fff5f5',
+        zIndex: 1,
     },
     separator: {
         height: 1,

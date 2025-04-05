@@ -8,7 +8,12 @@ const HomeScreen = ({ navigation }) => {
 
     // Función para agregar una nueva pieza
     const agregarPieza = (nuevaPieza) => {
-        setPiezas([...piezas, nuevaPieza]);
+        setPiezas([...piezas, { ...nuevaPieza, id: Date.now().toString() }]);
+    };
+
+    // Función para eliminar una pieza por su id
+    const eliminarPieza = (id) => {
+        setPiezas(piezas.filter(pieza => pieza.id !== id));
     };
 
     return (
@@ -25,15 +30,14 @@ const HomeScreen = ({ navigation }) => {
             {piezas.length === 0 ? (
                 <View style={styles.emptyContainer}>
                     <Icon name="build" size={50} color="#ccc" />
-                    <Text style={styles.noData}>No hay piezas registradas</Text>
+                    <Text style={styles.noData}>No hay piezas, Agregue una</Text>
                     <Text style={styles.subText}>Presiona "Agregar Pieza" para comenzar</Text>
                 </View>
             ) : (
-                // FlatList para mostrar las piezas
                 <FlatList
                     data={piezas}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => <PieceItem pieza={item} />}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => <PieceItem pieza={item} onDelete={eliminarPieza} />}
                     contentContainerStyle={styles.listContainer}
                     showsVerticalScrollIndicator={false}
                 />

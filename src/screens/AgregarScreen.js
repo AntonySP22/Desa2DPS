@@ -53,7 +53,7 @@ const AgregarScreen = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
             <View style={styles.formContainer}>
-                <Text style={styles.title}>Agregar Nueva Pieza</Text>
+                <Text style={styles.title}>Registro de piezas</Text>
 
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Pieza: *</Text>
